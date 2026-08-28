@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
+    <PackageReference Include="xunit.v3" Version="3.2.2" />
+    <PackageReference Include="QRCoder" Version="1.7.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <Compile Include="..\GestureLink.Windows.Core\**\*.cs" Exclude="..\GestureLink.Windows.Core\bin\**;..\GestureLink.Windows.Core\obj\**" LinkBase="Core" />
+    <Compile Include="..\GestureLink.Windows.App\MainViewModel.cs" Link="DevHost\MainViewModel.cs" />
+    <Compile Include="..\GestureLink.Windows.App\MainWindow.xaml.cs" Link="DevHost\MainWindow.xaml.cs" />
+    <Compile Include="..\GestureLink.Windows.App\RelayCommand.cs" Link="DevHost\RelayCommand.cs" />
+    <Compile Include="..\GestureLink.Windows.App\EmergencyHotkey.cs" Link="DevHost\EmergencyHotkey.cs" />
+    <Page Include="..\GestureLink.Windows.App\MainWindow.xaml" Link="DevHost\MainWindow.xaml" />
+  </ItemGroup>
+</Project>

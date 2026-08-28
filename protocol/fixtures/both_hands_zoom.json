@@ -1,0 +1,2 @@
+{"name":"both_hands_zoom","frames":[{"t":0,"left":{"pinch":true,"palm":[0.3,0.5]},"right":{"pinch":true,"palm":[0.7,0.5]}},{"t":100,"left":{"pinch":true,"palm":[0.25,0.5]},"right":{"pinch":true,"palm":[0.75,0.5]}}]}
+

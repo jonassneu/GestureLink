@@ -1,0 +1,25 @@
+package de.gesturelink.app.core
+
+data class GestureSettings(
+    val enterConfidence: Double = 0.75,
+    val stayConfidence: Double = 0.60,
+    val stabilizationMs: Long = 120,
+    val clickMinMs: Long = 90,
+    val clickMaxMs: Long = 350,
+    val dragThresholdMs: Long = 450,
+    val clickCooldownMs: Long = 250,
+    val pauseDwellMs: Long = 1_000,
+    val pauseCooldownMs: Long = 1_200,
+    val handLossGraceMs: Long = 180,
+    val deadzone: Double = 0.0008,
+    val maxDelta: Double = 0.08,
+    val spreadTogether: Double = 0.45,
+    val spreadWide: Double = 1.35,
+    val clutchThreshold: Double = 0.12,
+    val minGain: Double = 0.12,
+    val maxGain: Double = 5.0,
+    val dragGain: Double = 1.0,
+    val scrollGain: Double = 16.0,
+    val pinchEnterRatio: Double = 0.32,
+    val pinchExitRatio: Double = 0.42,
+)

@@ -1,0 +1,2 @@
+{"name":"noisy_low_confidence","frames":[{"t":0,"right":{"gesture":"Closed_Fist","confidence":0.2}},{"t":20,"right":{"gesture":"Open_Palm","confidence":0.3}},{"t":40,"right":{"gesture":"Closed_Fist","confidence":0.25}}]}
+

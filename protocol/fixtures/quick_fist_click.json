@@ -1,0 +1,2 @@
+{"name":"quick_fist_click","frames":[{"t":0,"right":{"gesture":"Open_Palm","confidence":0.9}},{"t":140,"right":{"gesture":"Closed_Fist","confidence":0.9}},{"t":300,"right":{"gesture":"Open_Palm","confidence":0.9}}]}
+

@@ -1,0 +1,2 @@
+{"name":"hold_fist_drag","frames":[{"t":0,"right":{"gesture":"Open_Palm","confidence":0.9}},{"t":150,"right":{"gesture":"Closed_Fist","confidence":0.92}},{"t":650,"right":{"gesture":"Closed_Fist","confidence":0.93}},{"t":900,"right":{"gesture":"Open_Palm","confidence":0.9}}]}
+

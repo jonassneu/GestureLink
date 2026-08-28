@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gesturelink.local/schema/envelope-v1.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "type", "sessionId", "sequence", "payload"],
+  "properties": {
+    "version": { "const": 1 },
+    "type": { "type": "string", "minLength": 1, "maxLength": 40 },
+    "sessionId": { "type": "string", "minLength": 1, "maxLength": 80 },
+    "sequence": { "type": "integer", "minimum": 0 },
+    "payload": { "type": "object" }
+  }
+}
+

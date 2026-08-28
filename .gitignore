@@ -1,0 +1,16 @@
+.gradle/
+.idea/
+.tools/
+**/build/
+**/bin/
+**/obj/
+**/.vs/
+android/local.properties
+android/signing.properties
+artifacts/
+*.user
+*.pfx
+*.keystore
+*.jks
+*.jsonl
+
