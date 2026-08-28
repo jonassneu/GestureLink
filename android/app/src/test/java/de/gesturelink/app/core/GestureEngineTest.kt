@@ -16,35 +16,65 @@ class GestureEngineTest {
         assertTrue(events.any { it is ControlEvent.PointerDelta })
     }
 
-    @Test fun rightFistProducesExactlyOneRightClick() {
+    @Test fun rightFistHoldsRightButtonUntilOpen() {
         val engine = GestureEngine(settings)
         engine.setArmed(true)
         engine.update(frame(0, hand(0.5, "Open_Palm", 0)))
         engine.update(frame(120, hand(0.5, "Open_Palm", 120)))
         engine.update(frame(150, hand(0.5, "Closed_Fist", 150)))
         engine.update(frame(260, hand(0.5, "Closed_Fist", 260)))
-        val result = engine.update(frame(360, hand(0.5, "Closed_Fist", 360)))
-        assertEquals(1, result.count { it == ControlEvent.Click(MouseButton.RIGHT) })
-        assertEquals(0, engine.update(frame(480, hand(0.5, "Closed_Fist", 480))).count { it is ControlEvent.Click })
+        val down = engine.update(frame(360, hand(0.5, "Closed_Fist", 360)))
+        assertTrue(down.contains(ControlEvent.SetButton(MouseButton.RIGHT, true)))
+        assertEquals(0, engine.update(frame(480, hand(0.5, "Closed_Fist", 480))).count { it is ControlEvent.SetButton })
+        engine.update(frame(520, hand(0.5, "Open_Palm", 520)))
+        val up = engine.update(frame(640, hand(0.5, "Open_Palm", 640)))
+        assertTrue(up.contains(ControlEvent.SetButton(MouseButton.RIGHT, false)))
     }
 
-    @Test fun leftFistProducesExactlyOneLeftClick() {
+    @Test fun leftFistHoldsLeftButtonUntilOpen() {
         val engine = GestureEngine(settings)
         engine.setArmed(true)
         engine.update(frame(0, hand(0.5, "Closed_Fist", 0, HandSide.LEFT)))
         engine.update(frame(120, hand(0.5, "Closed_Fist", 120, HandSide.LEFT)))
-        val result = engine.update(frame(220, hand(0.5, "Closed_Fist", 220, HandSide.LEFT)))
-        assertEquals(1, result.count { it == ControlEvent.Click(MouseButton.LEFT) })
-        assertEquals(0, engine.update(frame(600, hand(0.5, "Closed_Fist", 600, HandSide.LEFT))).count { it is ControlEvent.Click })
+        val down = engine.update(frame(220, hand(0.5, "Closed_Fist", 220, HandSide.LEFT)))
+        assertTrue(down.contains(ControlEvent.SetButton(MouseButton.LEFT, true)))
+        assertEquals(0, engine.update(frame(600, hand(0.5, "Closed_Fist", 600, HandSide.LEFT))).count { it is ControlEvent.SetButton })
+        engine.update(frame(640, hand(0.5, "Open_Palm", 640, HandSide.LEFT)))
+        val up = engine.update(frame(760, hand(0.5, "Open_Palm", 760, HandSide.LEFT)))
+        assertTrue(up.contains(ControlEvent.SetButton(MouseButton.LEFT, false)))
+    }
+
+    @Test fun heldButtonSurvivesBriefRecognitionGlitch() {
+        val engine = GestureEngine(settings)
+        engine.setArmed(true)
+        engine.update(frame(0, hand(0.5, "Closed_Fist", 0, HandSide.LEFT)))
+        engine.update(frame(120, hand(0.5, "Closed_Fist", 120, HandSide.LEFT)))
+        engine.update(frame(220, hand(0.5, "Closed_Fist", 220, HandSide.LEFT)))
+        engine.update(frame(250, hand(0.5, "None", 250, HandSide.LEFT)))
+        val glitch = engine.update(frame(370, hand(0.5, "None", 370, HandSide.LEFT)))
+        assertEquals(0, glitch.count { it == ControlEvent.SetButton(MouseButton.LEFT, false) })
+        engine.update(frame(400, hand(0.5, "Open_Palm", 400, HandSide.LEFT)))
+        val open = engine.update(frame(520, hand(0.5, "Open_Palm", 520, HandSide.LEFT)))
+        assertTrue(open.contains(ControlEvent.SetButton(MouseButton.LEFT, false)))
     }
 
     @Test fun twoHandsChangingDistanceProduceZoomWithoutClicks() {
         val engine = GestureEngine(settings)
         engine.setArmed(true)
         engine.update(frame(0, hand(0.45, "Open_Palm", 0, HandSide.LEFT), hand(0.55, "Open_Palm", 0, HandSide.RIGHT)))
-        val result = engine.update(frame(120, hand(0.35, "Open_Palm", 120, HandSide.LEFT), hand(0.65, "Open_Palm", 120, HandSide.RIGHT)))
+        engine.update(frame(120, hand(0.45, "Open_Palm", 120, HandSide.LEFT), hand(0.55, "Open_Palm", 120, HandSide.RIGHT)))
+        val result = engine.update(frame(240, hand(0.35, "Open_Palm", 240, HandSide.LEFT), hand(0.65, "Open_Palm", 240, HandSide.RIGHT)))
         assertTrue(result.contains(ControlEvent.Semantic("zoomIn")))
-        assertEquals(0, result.count { it is ControlEvent.Click })
+        assertEquals(0, result.count { it is ControlEvent.SetButton })
+    }
+
+    @Test fun smallTwoHandJitterDoesNotZoom() {
+        val engine = GestureEngine(settings)
+        engine.setArmed(true)
+        engine.update(frame(0, hand(0.40, "Open_Palm", 0, HandSide.LEFT), hand(0.60, "Open_Palm", 0, HandSide.RIGHT)))
+        engine.update(frame(120, hand(0.40, "Open_Palm", 120, HandSide.LEFT), hand(0.60, "Open_Palm", 120, HandSide.RIGHT)))
+        val result = engine.update(frame(260, hand(0.398, "Open_Palm", 260, HandSide.LEFT), hand(0.602, "Open_Palm", 260, HandSide.RIGHT)))
+        assertEquals(0, result.count { it is ControlEvent.Semantic })
     }
 
     private fun frame(time: Long, vararg hands: HandObservation) = HandFrame(hands.toList(), time, 640, 480, 10.0)

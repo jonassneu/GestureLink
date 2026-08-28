@@ -30,15 +30,18 @@ class GestureEngine(private var settings: GestureSettings = GestureSettings()) {
         val spreadFilter: OneEuroFilter = OneEuroFilter(0.8, 0.08),
         var anchor: Vec2? = null,
         var fistSince: Long? = null,
-        var fistActionSent: Boolean = false,
+        var heldButton: MouseButton? = null,
         var dragActive: Boolean = false,
         var lastClick: Long = Long.MIN_VALUE / 2,
         var lastSeen: Long = 0,
     )
 
     private val states = HandSide.entries.associateWith { HandState() }
+    private val zoomFilter = OneEuroFilter(minCutoff = 0.7, beta = 0.04)
     private var zoomActive = false
     private var zoomDistance = 0.0
+    private var zoomAccumulator = 0.0
+    private var lastZoomEmitMs = Long.MIN_VALUE / 2
     private var pauseSince: Long? = null
     private var pauseCooldownUntil = 0L
     private var previousPauseCenters: Pair<Vec2, Vec2>? = null
@@ -63,9 +66,9 @@ class GestureEngine(private var settings: GestureSettings = GestureSettings()) {
             val hand = bySide[side]
             val state = states.getValue(side)
             if (hand == null) {
-                if (state.dragActive && now - state.lastSeen >= settings.handLossGraceMs) {
-                    state.dragActive = false
-                    events += ControlEvent.SetButton(MouseButton.LEFT, false)
+                if (state.heldButton != null && now - state.lastSeen >= settings.handLossGraceMs) {
+                    events += ControlEvent.SetButton(state.heldButton!!, false)
+                    state.heldButton = null
                 }
                 state.anchor = null
                 continue
@@ -79,9 +82,8 @@ class GestureEngine(private var settings: GestureSettings = GestureSettings()) {
             events += ControlEvent.State(side, state.stable.active, spread01)
         }
 
-        if (handlePause(bySide, now, events)) return events
         if (!armed) return events
-        if (handleZoom(bySide, events)) return events
+        if (handleZoom(bySide, now, events)) return events
 
         val right = bySide[HandSide.RIGHT]
         val left = bySide[HandSide.LEFT]
@@ -105,15 +107,14 @@ class GestureEngine(private var settings: GestureSettings = GestureSettings()) {
         when (state.stable.active) {
             "Closed_Fist" -> {
                 val fistStart = state.fistSince ?: now.also { state.fistSince = it }
-                if (!state.fistActionSent && now - fistStart >= settings.clickMinMs && now - state.lastClick >= settings.clickCooldownMs) {
-                    out += ControlEvent.Click(MouseButton.RIGHT)
-                    state.fistActionSent = true
-                    state.lastClick = now
+                if (state.heldButton == null && now - fistStart >= settings.clickMinMs) {
+                    state.heldButton = MouseButton.RIGHT
+                    out += ControlEvent.SetButton(MouseButton.RIGHT, true)
                 }
             }
             "Open_Palm" -> {
+                releaseHeldButton(state, out)
                 state.fistSince = null
-                state.fistActionSent = false
                 val rawSpread = HandMetrics.normalizedSpread(hand.spreadRaw, settings.spreadTogether, settings.spreadWide)
                 val spread = state.spreadFilter.filter(rawSpread, now / 1000.0)
                 val gain = HandMetrics.gain(spread, settings.minGain, settings.maxGain, settings.clutchThreshold)
@@ -121,8 +122,9 @@ class GestureEngine(private var settings: GestureSettings = GestureSettings()) {
                 pointer(hand, state, now, gain, out)
             }
             else -> {
-                state.fistSince = null
-                state.fistActionSent = false
+                // Keep an already pressed button down through short recognition glitches.
+                // It is released by an explicitly open palm, hand loss, stop or disconnect.
+                if (state.heldButton == null) state.fistSince = null
             }
         }
         if (state.stable.active != "Open_Palm" && !state.dragActive) {
@@ -134,15 +136,14 @@ class GestureEngine(private var settings: GestureSettings = GestureSettings()) {
         when (state.stable.active) {
             "Closed_Fist" -> {
                 val fistStart = state.fistSince ?: now.also { state.fistSince = it }
-                if (!state.fistActionSent && now - fistStart >= settings.clickMinMs && now - state.lastClick >= settings.clickCooldownMs) {
-                    out += ControlEvent.Click(MouseButton.LEFT)
-                    state.fistActionSent = true
-                    state.lastClick = now
+                if (state.heldButton == null && now - fistStart >= settings.clickMinMs) {
+                    state.heldButton = MouseButton.LEFT
+                    out += ControlEvent.SetButton(MouseButton.LEFT, true)
                 }
             }
             "Open_Palm" -> {
+                releaseHeldButton(state, out)
                 state.fistSince = null
-                state.fistActionSent = false
                 if (cursorFallback) {
                     pointer(hand, state, now, settings.dragGain, out)
                 } else {
@@ -161,11 +162,17 @@ class GestureEngine(private var settings: GestureSettings = GestureSettings()) {
                 }
             }
             else -> {
-                state.fistSince = null
-                state.fistActionSent = false
+                // Keep an already pressed button down through short recognition glitches.
+                // It is released by an explicitly open palm, hand loss, stop or disconnect.
+                if (state.heldButton == null) state.fistSince = null
             }
         }
         if (cursorFallback && state.stable.active != "Open_Palm") pointer(hand, state, now, settings.dragGain, out)
+    }
+
+    private fun releaseHeldButton(state: HandState, out: MutableList<ControlEvent>) {
+        state.heldButton?.let { out += ControlEvent.SetButton(it, false) }
+        state.heldButton = null
     }
 
     private fun pointer(hand: HandObservation, state: HandState, now: Long, gain: Double, out: MutableList<ControlEvent>) {
@@ -188,23 +195,39 @@ class GestureEngine(private var settings: GestureSettings = GestureSettings()) {
         return Vec2(state.xFilter.filter(p.x, now / 1000.0), state.yFilter.filter(p.y, now / 1000.0))
     }
 
-    private fun handleZoom(hands: Map<HandSide, HandObservation>, out: MutableList<ControlEvent>): Boolean {
+    private fun handleZoom(hands: Map<HandSide, HandObservation>, now: Long, out: MutableList<ControlEvent>): Boolean {
         val left = hands[HandSide.LEFT]
         val right = hands[HandSide.RIGHT]
-        val bothVisible = left != null && right != null
-        if (!zoomActive && bothVisible) {
-            zoomActive = true
-            zoomDistance = left!!.palmCenter.distanceTo(right!!.palmCenter).coerceAtLeast(0.01)
-            states.values.forEach { it.anchor = null }
-        } else if (zoomActive && bothVisible) {
-            val distance = left!!.palmCenter.distanceTo(right!!.palmCenter).coerceAtLeast(0.01)
-            val amount = ln(distance / zoomDistance)
-            if (abs(amount) > 0.035) {
-                out += ControlEvent.Semantic(if (amount > 0) "zoomIn" else "zoomOut")
+        if (left != null && right != null &&
+            states.getValue(HandSide.LEFT).stable.active == "Open_Palm" &&
+            states.getValue(HandSide.RIGHT).stable.active == "Open_Palm"
+        ) {
+            val rawDistance = left.palmCenter.distanceTo(right.palmCenter).coerceAtLeast(0.04)
+            if (!zoomActive) {
+                states.values.forEach { releaseHeldButton(it, out) }
+                zoomFilter.reset()
+                zoomActive = true
+                zoomDistance = zoomFilter.filter(rawDistance, now / 1000.0)
+                zoomAccumulator = 0.0
+                lastZoomEmitMs = now
+                states.values.forEach { it.anchor = null }
+            } else {
+                val distance = zoomFilter.filter(rawDistance, now / 1000.0)
+                val change = ln(distance / zoomDistance.coerceAtLeast(0.04)).coerceIn(-0.12, 0.12)
                 zoomDistance = distance
+                zoomAccumulator = (zoomAccumulator + change).coerceIn(-0.35, 0.35)
+                val step = 0.055
+                if (now - lastZoomEmitMs >= 120 && abs(zoomAccumulator) >= step) {
+                    val direction = if (zoomAccumulator > 0) 1.0 else -1.0
+                    out += ControlEvent.Semantic(if (direction > 0) "zoomIn" else "zoomOut")
+                    zoomAccumulator -= direction * step
+                    lastZoomEmitMs = now
+                }
             }
         } else if (zoomActive) {
             zoomActive = false
+            zoomFilter.reset()
+            zoomAccumulator = 0.0
             states.values.forEach { it.anchor = null }
         }
         return zoomActive
@@ -251,13 +274,15 @@ class GestureEngine(private var settings: GestureSettings = GestureSettings()) {
     }
 
     private fun releaseAll(): List<ControlEvent> {
-        states.values.forEach { it.dragActive = false }
+        states.values.forEach { it.dragActive = false; it.heldButton = null }
         resetBaselines()
         return listOf(ControlEvent.ReleaseAll)
     }
 
     private fun resetBaselines() {
         zoomActive = false
+        zoomFilter.reset()
+        zoomAccumulator = 0.0
         pauseSince = null
         states.values.forEach(::resetHand)
     }
@@ -265,7 +290,7 @@ class GestureEngine(private var settings: GestureSettings = GestureSettings()) {
     private fun resetHand(state: HandState) {
         state.anchor = null
         state.fistSince = null
-        state.fistActionSent = false
+        state.heldButton = null
         state.xFilter.reset()
         state.yFilter.reset()
         state.spreadFilter.reset()

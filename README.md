@@ -39,13 +39,12 @@ Keep GestureLink visible on the phone and press **START**. Leaving the app, losi
 | Move one visible hand | Move cursor |
 | Fingers close together | Low cursor sensitivity |
 | Fingers spread wide | Very high cursor sensitivity |
-| Right fist, held briefly | Right click |
-| Left fist, held briefly | Left click |
+| Hold right fist | Hold right mouse button until the hand opens |
+| Hold left fist | Hold left mouse button until the hand opens; move to draw or drag |
 | Move two visible hands apart/together | Zoom in/out |
 | Left open hand when the right is also visible | Scroll |
-| Two wide open, still hands | Pause/resume |
 
-A fist fires once. Open the hand before triggering the same click again.
+A fist holds its mouse button down. Opening the hand, losing tracking, stopping control, or disconnecting releases it.
 
 ## Normal LAN mode
 
@@ -94,7 +93,7 @@ Validated on a Xiaomi `25010PN30G` running Android 16/API 36:
 - USB/TLS connection
 - portrait/landscape recreation
 - real Windows cursor movement
-- Android unit tests: 10 passing
+- Android unit tests: 12 passing
 - Windows unit/contract tests: 13 passing
 
 Still needs broader hardware testing: click/zoom tuning, multi-monitor and DPI combinations, long thermal runs, Android 7–17, and Windows 10/11 coverage.
