@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="740" viewBox="0 0 1280 740" font-family="-apple-system, 'SF Pro Display', 'Segoe UI Variable Display', 'Segoe UI', Inter, system-ui, Helvetica, Arial, sans-serif">
+<defs>
+  <filter id="sh" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="8" stdDeviation="14" flood-color="#000" flood-opacity="0.10"/></filter>
+  <filter id="shs" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000" flood-opacity="0.06"/></filter>
+  <linearGradient id="acc" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#00A88A"/><stop offset="1" stop-color="#0071E3"/></linearGradient>
+  <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#00A88A" stop-opacity="0.22"/><stop offset="1" stop-color="#00A88A" stop-opacity="0"/></radialGradient>
+</defs>
+<rect width="1280" height="740" rx="28" fill="#F5F5F7"/>
+
+<text x="640" y="104" text-anchor="middle" font-size="22" font-weight="600" letter-spacing="0.4" fill="#00A88A">GestureLink</text>
+<text x="640" y="184" text-anchor="middle" font-size="76" font-weight="700" letter-spacing="-2.4" fill="#1D1D1F">Your hand is the mouse.</text>
+<text x="640" y="232" text-anchor="middle" font-size="25" font-weight="400" letter-spacing="-0.2" fill="#6E6E73">Control a Windows PC with gestures, seen by your Android phone's camera.</text>
+<ellipse cx="400" cy="490" rx="200" ry="150" fill="url(#glow)"/>
+<g transform="translate(300 290)" filter="url(#sh)">
+  <rect width="200" height="400" rx="40" fill="#1D1D1F"/>
+  <rect x="9" y="9" width="182" height="382" rx="32" fill="#F5F5F7"/>
+  <rect x="72" y="22" width="56" height="16" rx="8" fill="#1D1D1F"/>
+</g>
+<g transform="translate(300 290)"><polyline points="82.5,231.2 102.5,226.2 120.0,231.2 137.5,243.8" fill="none" stroke="#00A88A" stroke-opacity="0.45" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<polyline points="100.0,300.0 65.0,262.5 50.0,231.2 40.0,203.8" fill="none" stroke="#00A88A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<polyline points="100.0,300.0 82.5,231.2 77.5,191.2 75.0,161.2" fill="none" stroke="#00A88A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<polyline points="100.0,300.0 102.5,226.2 105.0,181.2 106.2,146.2" fill="none" stroke="#00A88A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<polyline points="100.0,300.0 120.0,231.2 127.5,191.2 132.5,163.8" fill="none" stroke="#00A88A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<polyline points="100.0,300.0 137.5,243.8 150.0,218.8 160.0,196.2" fill="none" stroke="#00A88A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="65.0" cy="262.5" r="2.8" fill="#FFFFFF" stroke="#00A88A" stroke-width="2.0"/>
+<circle cx="50.0" cy="231.2" r="2.8" fill="#FFFFFF" stroke="#00A88A" stroke-width="2.0"/>
+<circle cx="40.0" cy="203.8" r="3.6" fill="#FFFFFF" stroke="#00A88A" stroke-width="2.0"/>
+<circle cx="82.5" cy="231.2" r="2.8" fill="#FFFFFF" stroke="#00A88A" stroke-width="2.0"/>
+<circle cx="77.5" cy="191.2" r="2.8" fill="#FFFFFF" stroke="#00A88A" stroke-width="2.0"/>
+<circle cx="75.0" cy="161.2" r="3.6" fill="#FFFFFF" stroke="#00A88A" stroke-width="2.0"/>
+<circle cx="102.5" cy="226.2" r="2.8" fill="#FFFFFF" stroke="#00A88A" stroke-width="2.0"/>
+<circle cx="105.0" cy="181.2" r="2.8" fill="#FFFFFF" stroke="#00A88A" stroke-width="2.0"/>
+<circle cx="106.2" cy="146.2" r="3.6" fill="#FFFFFF" stroke="#00A88A" stroke-width="2.0"/>
+<circle cx="120.0" cy="231.2" r="2.8" fill="#FFFFFF" stroke="#00A88A" stroke-width="2.0"/>
+<circle cx="127.5" cy="191.2" r="2.8" fill="#FFFFFF" stroke="#00A88A" stroke-width="2.0"/>
+<circle cx="132.5" cy="163.8" r="3.6" fill="#FFFFFF" stroke="#00A88A" stroke-width="2.0"/>
+<circle cx="137.5" cy="243.8" r="2.8" fill="#FFFFFF" stroke="#00A88A" stroke-width="2.0"/>
+<circle cx="150.0" cy="218.8" r="2.8" fill="#FFFFFF" stroke="#00A88A" stroke-width="2.0"/>
+<circle cx="160.0" cy="196.2" r="3.6" fill="#FFFFFF" stroke="#00A88A" stroke-width="2.0"/>
+<circle cx="100.0" cy="300.0" r="4.4" fill="#FFFFFF" stroke="#00A88A" stroke-width="2.0"/><circle cx="100" cy="225" r="16" fill="none" stroke="#C77700" stroke-width="3"/></g>
+<g>
+  <path d="M540 490 L 700 490" stroke="url(#acc)" stroke-width="4" stroke-linecap="round" stroke-dasharray="0.1 14"/>
+  <g filter="url(#shs)"><rect x="570" y="466" width="100" height="48" rx="24" fill="#FFFFFF"/></g>
+  <path d="M598 486 v-5 a8 8 0 0 1 16 0 v5" fill="none" stroke="#1D1D1F" stroke-width="2.4" stroke-linecap="round"/>
+  <rect x="594" y="486" width="24" height="17" rx="4" fill="#1D1D1F"/>
+  <text x="628" y="499" font-size="15" font-weight="600" letter-spacing="0.3" fill="#1D1D1F">TLS</text>
+</g>
+<g transform="translate(720 356)" filter="url(#sh)">
+  <rect width="340" height="220" rx="18" fill="#1D1D1F"/>
+  <rect x="8" y="8" width="324" height="204" rx="11" fill="#F5F5F7"/>
+  <path d="M140 220 L130 262 L210 262 L200 220 Z" fill="#1D1D1F"/>
+  <rect x="104" y="260" width="132" height="8" rx="4" fill="#1D1D1F"/>
+</g>
+<g transform="translate(720 356)"><rect x="32" y="34" width="96" height="10" rx="5" fill="#D2D2D7"/><rect x="32" y="54" width="170" height="10" rx="5" fill="#D2D2D7"/><rect x="32" y="74" width="132" height="10" rx="5" fill="#D2D2D7"/><path d="M60 170 C 110 110, 170 190, 228 128" fill="none" stroke="#00A88A" stroke-width="4" stroke-linecap="round" stroke-dasharray="0.1 10"/><path transform="translate(228 126)" d="M0 0 L0 30 L8 22 L14 36 L20 33 L14 20 L25 20 Z" fill="#1D1D1F" stroke="#FFFFFF" stroke-width="2" stroke-linejoin="round" filter="url(#shs)"/></g>
+
+</svg>
