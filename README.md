@@ -12,7 +12,7 @@
 
 <br>
 
-[Get started](#get-started) &nbsp;·&nbsp; [Gestures](#gestures) &nbsp;·&nbsp; [How it works](#how-it-works) &nbsp;·&nbsp; [Privacy](#privacy) &nbsp;·&nbsp; [Docs](docs/)
+[The idea](#the-idea) &nbsp;·&nbsp; [Get started](#get-started) &nbsp;·&nbsp; [Gestures](#gestures) &nbsp;·&nbsp; [How it works](#how-it-works) &nbsp;·&nbsp; [Privacy](#privacy) &nbsp;·&nbsp; [Docs](docs/)
 
 <br>
 
@@ -21,6 +21,16 @@
 [![MIT](https://img.shields.io/badge/license-MIT-1D1D1F.svg)](LICENSE)
 
 </div>
+
+<br>
+
+## The idea
+
+Sometimes there's no room for a mouse: a cramped desk, a plane tray table, a laptop on your knees. But your phone is already in your pocket, and it has a camera. Stand it next to your laptop, raise your hand, and the cursor follows.
+
+<p align="center">
+  <img src="docs/media/idea-sketch.jpg" alt="Sketch: no space for a mouse on a desk or plane tray table, so the phone's camera tracks your hand and moves the laptop's cursor" width="100%">
+</p>
 
 <br>
 
@@ -159,6 +169,16 @@ Still to test on more hardware: click and zoom tuning, multiple monitors and dis
 | [`scripts/`](scripts/) | Build, publish, verify, demo setup |
 
 Product naming lives in one place on each platform: Android `AppConfig`/`BuildConfig` and Windows `ProductInfo`. The README artwork comes from [`docs/assets/generate.py`](docs/assets/generate.py).
+
+<br>
+
+## Built in 3 hours
+
+GestureLink went from sketch to working demo in a single 3‑hour Cursor hackathon, and it won. 🏆
+
+<p align="center">
+  <img src="docs/media/hackathon.jpg" alt="The hackathon venue, with laptops running the build in the foreground" width="100%">
+</p>
 
 <br>
 
